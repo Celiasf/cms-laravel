@@ -10,7 +10,7 @@ class AppController extends Controller
         //Obtengo las noticias a mostrar en la home
         $rowset = Noticia::where('activo', 1)->where('home', 1)->orderBy('fecha', 'DESC')->get();
 
-        return view('app.index',[
+        return view('app.index', [
             'rowset' => $rowset,
         ]);
     }
@@ -20,7 +20,7 @@ class AppController extends Controller
         //Obtengo las noticias a mostrar en el listado de noticias
         $rowset = Noticia::where('activo', 1)->orderBy('fecha', 'DESC')->get();
 
-        return view('app.noticias',[
+        return view('app.noticias', [
             'rowset' => $rowset,
         ]);
     }
@@ -30,7 +30,7 @@ class AppController extends Controller
         //Obtengo la noticia o muestro error
         $row = Noticia::where('activo', 1)->where('slug', $slug)->firstOrFail();
 
-        return view('app.noticia',[
+        return view('app.noticia', [
             'row' => $row,
         ]);
     }
@@ -52,14 +52,14 @@ class AppController extends Controller
         //$noticias = $rowset;
 
         //Opción personalizada
-        foreach ($rowset as $row){
+        foreach ($rowset as $row) {
             $noticias[] = [
                 'titulo' => $row->titulo,
                 'entradilla' => $row->entradilla,
                 'autor' => $row->autor,
                 'fecha' => date("d/m/Y", strtotime($row->fecha)),
-                'enlace' => url("noticia/".$row->slug),
-                'imagen' => asset("img/".$row->imagen)
+                'enlace' => url("noticia/" . $row->slug),
+                'imagen' => asset("img/" . $row->imagen)
             ];
         }
 
@@ -71,5 +71,20 @@ class AppController extends Controller
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE //Opciones de escape
         );
 
+    }
+
+    public function leer()
+    {
+
+        //Url de destino
+        $url = 'http://13.37.88.251/cms-laravel-3/public/index.php/mostrar';
+
+        //Parseo datos a un array
+        $rowset = json_decode(file_get_contents($url), true);
+
+        //LLamo a la vista
+        return view('api.leer', [
+            'rowset' => $rowset,
+        ]);
     }
 }
